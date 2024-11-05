@@ -1,0 +1,22 @@
+[
+    {
+        "nombre": "Universidad de Medellín",
+        "carrera": "Ingeniería de Sistemas",
+        "precio": "4,000,000",
+        "materias": ["Matemáticas", "Programación", "Algoritmos"],
+        "becas": "Beca del 50% para destacados",
+        "link": "https://www.udem.edu.co",
+        "ciudad": "Medellín",
+        "sedes": ["Sede Centro", "Sede Sur"]
+    },
+    {
+        "nombre": "Universidad Nacional",
+        "carrera": "Ingeniería Civil",
+        "precio": "5,000,000",
+        "materias": ["Cálculo", "Estructuras", "Materiales"],
+        "becas": "Beca completa por mérito",
+        "link": "https://www.unal.edu.co",
+        "ciudad": "Medellín",
+        "sedes": ["Sede Principal"]
+    }
+]

@@ -1,4 +1,4 @@
-# Buscador de Universidades
+# U.F (University finder).Buscador de Universidades
 
 Esta aplicación permite a los usuarios buscar universidades en Medellín que ofrezcan programas específicos. Los resultados incluyen información sobre las materias, el precio, becas y enlaces directos a las páginas oficiales de las universidades.
 

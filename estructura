@@ -1,0 +1,18 @@
+1. JavaScript (assets/script.js)
+Funcionalidad: Maneja el envío del formulario de búsqueda.
+Eventos: Escucha el evento submit del formulario, previene el comportamiento por defecto, recoge los valores de los campos de entrada (ciudad y carrera), realiza una solicitud a un API (api.php) para obtener los resultados, guarda los resultados en localStorage y redirige a la página de resultados (resultados.php).
+2. CSS (assets/styles.css)
+Estilos: Define estilos básicos para la página, como la fuente, colores de fondo, márgenes, y estilos para los elementos del formulario y las tarjetas de resultados.
+3. Datos de Ejemplo (JSON)
+Estructura de Datos: Un ejemplo de un arreglo de universidades que incluye propiedades como nombre, carrera, precio, materias, becas, link, ciudad, y sedes. Esto es un ejemplo de cómo se estructuran los datos que se manejarán en la aplicación.
+4. PHP (api.php)
+Funcionalidad: Utiliza la biblioteca Goutte para hacer web scraping de una página de universidades y extraer información sobre los programas ofrecidos.
+Salida: Guarda la información extraída en un archivo JSON (universidades.json) y también maneja las solicitudes GET para filtrar universidades según ciudad y carrera, devolviendo los resultados en formato JSON.
+5. HTML (views/index.php)
+Estructura de la Página de Búsqueda: Contiene el formulario de búsqueda con campos para ciudad y carrera, y un botón para enviar la búsqueda.
+Integración de CSS y JavaScript: Incluye enlaces a los estilos CSS y al script JavaScript que maneja la lógica de búsqueda.
+6. HTML (views/resultados.php)
+Estructura de la Página de Resultados: Presenta los resultados de búsqueda almacenados en localStorage.
+JavaScript: Al cargar la página, el script recupera los resultados de localStorage, los parsea y los muestra en tarjetas dentro del contenedor de resultados.
+7. PHP (parte de api.php para manejar la búsqueda)
+Filtrado de Datos: Lee el archivo universidades.json, filtra los datos según los parámetros de búsqueda (ciudad y carrera), y devuelve los resultados en formato JSON.

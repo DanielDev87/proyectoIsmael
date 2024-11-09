@@ -1,18 +1,45 @@
-1. JavaScript (assets/script.js)
-Funcionalidad: Maneja el envío del formulario de búsqueda.
-Eventos: Escucha el evento submit del formulario, previene el comportamiento por defecto, recoge los valores de los campos de entrada (ciudad y carrera), realiza una solicitud a un API (api.php) para obtener los resultados, guarda los resultados en localStorage y redirige a la página de resultados (resultados.php).
-2. CSS (assets/styles.css)
-Estilos: Define estilos básicos para la página, como la fuente, colores de fondo, márgenes, y estilos para los elementos del formulario y las tarjetas de resultados.
-3. Datos de Ejemplo (JSON)
-Estructura de Datos: Un ejemplo de un arreglo de universidades que incluye propiedades como nombre, carrera, precio, materias, becas, link, ciudad, y sedes. Esto es un ejemplo de cómo se estructuran los datos que se manejarán en la aplicación.
-4. PHP (api.php)
-Funcionalidad: Utiliza la biblioteca Goutte para hacer web scraping de una página de universidades y extraer información sobre los programas ofrecidos.
-Salida: Guarda la información extraída en un archivo JSON (universidades.json) y también maneja las solicitudes GET para filtrar universidades según ciudad y carrera, devolviendo los resultados en formato JSON.
-5. HTML (views/index.php)
-Estructura de la Página de Búsqueda: Contiene el formulario de búsqueda con campos para ciudad y carrera, y un botón para enviar la búsqueda.
-Integración de CSS y JavaScript: Incluye enlaces a los estilos CSS y al script JavaScript que maneja la lógica de búsqueda.
-6. HTML (views/resultados.php)
-Estructura de la Página de Resultados: Presenta los resultados de búsqueda almacenados en localStorage.
-JavaScript: Al cargar la página, el script recupera los resultados de localStorage, los parsea y los muestra en tarjetas dentro del contenedor de resultados.
-7. PHP (parte de api.php para manejar la búsqueda)
-Filtrado de Datos: Lee el archivo universidades.json, filtra los datos según los parámetros de búsqueda (ciudad y carrera), y devuelve los resultados en formato JSON.
+1. Estructuras de Control
+JavaScript:
+Estructuras de control de flujo: Se utilizan async/await para manejar la asincronía en las solicitudes de red. También se usan estructuras de control como forEach para iterar sobre los resultados obtenidos.
+Condicionales: Se utilizan condicionales implícitos en el filtrado de datos (por ejemplo, stripos en PHP).
+2. Estructuras de Datos
+JSON:
+
+La estructura de datos de las universidades está en formato JSON, que se utiliza para almacenar información en un formato legible y fácil de manipular. Incluye objetos y arreglos que representan las universidades y sus características.
+Ejemplo de un objeto en JSON:
+json
+
+Verify
+
+Open In Editor
+Edit
+Copy code
+{
+    "nombre": "Universidad de Medellín",
+    "carrera": "Ingeniería de Sistemas",
+    ...
+}
+Arreglos:
+
+En PHP, los datos de universidades se almacenan en un arreglo asociativo que se llena a partir del scraping.
+En JavaScript, los resultados se almacenan en un arreglo que se obtiene del localStorage.
+3. Estructuras de Funciones
+Funciones anónimas:
+Se utilizan en el método each de Goutte para procesar cada nodo del DOM que se obtiene al hacer scraping.
+En JavaScript, se utiliza una función anónima dentro del evento DOMContentLoaded para manejar la carga de resultados.
+4. Estructuras de Clases y Objetos
+Clases CSS:
+Se definen clases CSS como .container, .card, .form-control, y .btn, que se utilizan para aplicar estilos a los elementos HTML.
+Objetos JavaScript:
+En el contexto de la aplicación, los resultados de la búsqueda se pueden considerar objetos, donde cada universidad es un objeto con propiedades como nombre, carrera, precio, etc.
+5. Estructuras de Archivos
+Estructura de carpetas:
+La aplicación está organizada en carpetas que separan los diferentes tipos de archivos:
+assets/: Contiene archivos estáticos como JavaScript y CSS.
+views/: Contiene archivos HTML que representan las diferentes vistas de la aplicación.
+data/: Contiene archivos de datos (en este caso, JSON) que se utilizan para almacenar información sobre universidades.
+6. Estructuras de Interacción
+Eventos:
+Se utilizan eventos de JavaScript (como submit y DOMContentLoaded) para manejar la interacción del usuario con la interfaz.
+API:
+Se establece una estructura de comunicación entre el frontend y el backend mediante solicitudes HTTP (fetch) que permiten obtener datos en formato JSON.

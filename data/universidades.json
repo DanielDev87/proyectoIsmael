@@ -18,5 +18,15 @@
         "link": "https://www.unal.edu.co",
         "ciudad": "Medellín",
         "sedes": ["Sede Principal"]
+    },
+    {
+        "nombre": "Universidad Politecnico Jaime Isaza Cadavid",
+        "carrera": "Ingeniería Civil",
+        "precio": "8,000,000",
+        "materias": ["Algebra y Trigonometría", "Introducción al Área Profesional", "Pedagogía Constitucional"],
+        "becas": "Beca Futuro",
+        "link": "https://https://www.politecnicojic.edu.co",
+        "ciudad": "Medellín",
+        "sedes": ["Sede Principal"]
     }
 ]

@@ -1,0 +1,15 @@
+# Use the official PHP image as the base image
+FROM php:8.0-apache
+
+# Install necessary PHP extensions
+RUN docker-php-ext-install pdo pdo_mysql
+
+# Copy the PHP application code to the container
+COPY src/ /var/www/html/
+COPY php.ini /usr/local/etc/php/
+
+# Set the working directory
+WORKDIR /var/www/html/
+
+# Expose port 80
+EXPOSE 80

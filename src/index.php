@@ -1,11 +1,29 @@
 <?php
+session_start(); // Iniciar sesión
 
 $request = $_SERVER['REQUEST_URI'];
-$viewDir = __DIR__ . '/views/';  // Asumiendo que tus vistas están en la carpeta 'views'
+$parsedUrl = parse_url($request);  // Parsear la URL
+$path = $parsedUrl['path'];  // Obtener solo el path sin los parámetros
+$search = isset($_GET['search']) ? $_GET['search'] : '';
+$viewDir = __DIR__ . '/views/';  // Carpeta de vistas
 
+
+error_log('' . $viewDir . '|' . $search .'|' . $request . '|');
+
+// Rutas que no requieren autenticación
+$publicRoutes = [
+    '/login',
+];
+
+// Verificar si el usuario está autenticado
+if (!in_array($path, $publicRoutes) && empty($_SESSION['user_id'])) {
+    // Redirigir al login si no hay sesión activa y la ruta no es pública
+    header('Location: /login');
+    exit;
+}
 
 // Enrutamiento basado en el path
-switch ($request) {
+switch ($path) {
     // Páginas principales
     case '':
     case '/':
@@ -16,6 +34,13 @@ switch ($request) {
     case '/login':
         require $viewDir . 'login.php';
         break;
+
+    // Logout
+    case '/logout':
+        session_unset();
+        session_destroy();
+        header('Location: /login');
+        exit;
 
     // Search (búsqueda general)
     case '/search':

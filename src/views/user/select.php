@@ -1,47 +1,79 @@
 <?php
-include 'db.php';  // Incluir la conexión a la base de datos
+require_once __DIR__ . '/../../config/db.php';
+
+// Definir la tabla y las columnas que quieres consultar
+$table = 'users';  // Tabla en la que deseas insertar (esto puede cambiar según lo que necesites)
+$columns = ['username', 'password'];  // Columnas de la tabla para insertar
+$columns_selected = ['username'];  // Columnas seleccionadas
+$columns_show = ['Nombre'];  // Columnas seleccionadas
+$search_col = ['username'];
 
 // Verificar si hay un término de búsqueda
-$search = '';
-if (isset($_GET['search'])) {
-    $search = $_GET['search'];
+$search = isset($_GET['search']) ? $_GET['search'] : '';
+
+// Construir la consulta SQL con búsqueda si es necesario
+$sql = "SELECT " . implode(', ', $columns) . " FROM $table";
+if ($search) {
+    $sql .= " WHERE " . implode(' LIKE :search OR ', $search_col) . " LIKE :search";
 }
 
-// Consulta SQL con filtro por nombre de usuario
-$sql = "SELECT id, username FROM users WHERE username LIKE :search ORDER BY username";
 $stmt = $pdo->prepare($sql);
-$stmt->bindValue(':search', '%' . $search . '%');  // Filtramos por nombre de usuario
+if ($search) {
+    $stmt->bindValue(':search', '%' . $search . '%');
+}
 $stmt->execute();
-$users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$records = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<!-- Formulario de búsqueda -->
-<form method="get">
-    <label for="search">Buscar usuario:</label>
-    <input type="text" name="search" id="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Buscar por nombre">
-    <input type="submit" value="Buscar">
-</form>
+<?php include __DIR__ . '/../headers.php'; ?>
+<?php include __DIR__ . '/../navbar.php'; ?>
 
-<!-- Tabla de usuarios -->
-<table border="1">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Username</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php
-        if ($users) {
-            foreach ($users as $user) {
-                echo "<tr>";
-                echo "<td>" . htmlspecialchars($user['id']) . "</td>";
-                echo "<td>" . htmlspecialchars($user['username']) . "</td>";
-                echo "</tr>";
-            }
-        } else {
-            echo "<tr><td colspan='2'>No se encontraron usuarios.</td></tr>";
-        }
-        ?>
-    </tbody>
-</table>
+<div class="container py-3">
+<!-- Formulario de búsqueda -->
+    <div class="container-fluid my-3">
+        <form method="get" class="d-flex">
+            <label for="search" class="visually-hidden">Buscar:</label>
+            <input 
+                type="text" 
+                class="form-control me-2" 
+                name="search" 
+                id="search" 
+                value="<?php echo htmlspecialchars($search); ?>" 
+                placeholder="Buscar"
+            >
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </form>
+    </div>
+
+    <?php if ($records): ?>
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <?php foreach ($columns_show as $column): ?>
+                        <th scope="col"><?php echo htmlspecialchars(ucfirst($column)); ?></th>
+                    <?php endforeach; ?>
+                    <th scope="col">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($records as $record): ?>
+                    <tr>
+                        <?php foreach ($columns_selected as $column): ?>
+                            <td><?php echo htmlspecialchars($record[$column]); ?></td>
+                        <?php endforeach; ?>
+                        <td>
+                            <!-- <a href="update?id=<?php echo $record['username']; ?>" class="btn btn-warning btn-sm">Actualizar</a> -->
+                            <a href="delete?id=<?php echo $record['username']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?');">Eliminar</a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php else: ?>
+        <div class="alert alert-info" role="alert">
+            No se encontraron registros.
+        </div>
+    <?php endif; ?>
+    </div>
+
+<?php include __DIR__ . '/../footer.php'; ?>

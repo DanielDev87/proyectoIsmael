@@ -1,34 +1,79 @@
 <?php
-include 'db.php';
+require_once __DIR__ . '/../../config/db.php';
 
-$sql = "SELECT * FROM universities";
-$stmt = $pdo->query($sql);
-$universities = $stmt->fetchAll();
+// Definir la tabla y las columnas que quieres consultar
+$table = 'universities';  // Puedes cambiar esto según la entidad que deseas consultar
+$columns = ['id', 'name', 'city'];  // Ajusta las columnas según la tabla seleccionada
+$columns_selected = ['id', 'name', 'city'];  // Columnas seleccionadas
+$columns_show = ['Id', 'Nombre', 'Ciudad'];  // Columnas seleccionadas
+$search_col = ['name', 'city'];
 
-echo "<h1>Lista de Universidades</h1>";
-echo "<table border='1'>
-        <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Ciudad</th>
-            <th>Acciones</th>
-        </tr>";
+// Verificar si hay un término de búsqueda
+$search = isset($_GET['search']) ? $_GET['search'] : '';
 
-
-
-fore
-foreach ($universities as $university) {
-    echo "<tr>
-            <td>" . $university['id'] . "</td>
-            <td>" . $university['name'] . "</td>
-            <td>" . $university['city'] . "</td>
-            <td>
-                <a href='update.php?id=" . $university['id'] . "'>Actualizar</a> |
-                <a href='delete.php?id=" . $university['id'] . "'>Eliminar</a>
-            </td>
-          </tr>";
+// Construir la consulta SQL con búsqueda si es necesario
+$sql = "SELECT " . implode(', ', $columns) . " FROM $table";
+if ($search) {
+    $sql .= " WHERE " . implode(' LIKE :search OR ', $search_col) . " LIKE :search";
 }
 
-
-echo "</table>";
+$stmt = $pdo->prepare($sql);
+if ($search) {
+    $stmt->bindValue(':search', '%' . $search . '%');
+}
+$stmt->execute();
+$records = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
+
+<?php include __DIR__ . '/../headers.php'; ?>
+<?php include __DIR__ . '/../navbar.php'; ?>
+
+<div class="container py-3">
+<!-- Formulario de búsqueda -->
+    <div class="container-fluid my-3">
+        <form method="get" class="d-flex">
+            <label for="search" class="visually-hidden">Buscar:</label>
+            <input 
+                type="text" 
+                class="form-control me-2" 
+                name="search" 
+                id="search" 
+                value="<?php echo htmlspecialchars($search); ?>" 
+                placeholder="Buscar"
+            >
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </form>
+    </div>
+
+    <?php if ($records): ?>
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <?php foreach ($columns_show as $column): ?>
+                        <th scope="col"><?php echo htmlspecialchars(ucfirst($column)); ?></th>
+                    <?php endforeach; ?>
+                    <th scope="col">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($records as $record): ?>
+                    <tr>
+                        <?php foreach ($columns_selected as $column): ?>
+                            <td><?php echo htmlspecialchars($record[$column]); ?></td>
+                        <?php endforeach; ?>
+                        <td>
+                            <a href="update?id=<?php echo $record['id']; ?>" class="btn btn-warning btn-sm">Actualizar</a>
+                            <a href="delete?id=<?php echo $record['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?');">Eliminar</a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php else: ?>
+        <div class="alert alert-info" role="alert">
+            No se encontraron registros.
+        </div>
+    <?php endif; ?>
+    </div>
+
+<?php include __DIR__ . '/../footer.php'; ?>

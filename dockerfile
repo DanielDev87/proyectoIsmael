@@ -8,7 +8,7 @@ RUN a2enmod rewrite
 # Establecer el directorio de trabajo en el contenedor
 WORKDIR /var/www/html
 
-# Copiar el código fuente desde tu máquina local al contenedor
+# Copiar el código fuente y el archivo composer.json
 COPY ./src /var/www/html
 
 # Configurar Apache para que sirva desde la raíz correcta

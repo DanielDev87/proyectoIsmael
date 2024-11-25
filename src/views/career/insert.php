@@ -1,71 +1,87 @@
 <?php
-include 'db.php';
+require_once __DIR__ . '/../../config/db.php';
 
+// Parámetros generales
+$table = 'careers';  // Tabla en la que deseas insertar (esto puede cambiar según lo que necesites)
+$columns = ['name', 'university_id', 'area'];  // Columnas de la tabla para insertar
+$placeholders = [':name', ':university_id', ':area'];  // Placeholders para el SQL
+$form_fields = ['name', 'university_id', 'area']; // Los campos del formulario que se corresponden con las columnas
+
+// Mensajes de éxito o error
+$message = '';
+$alertClass = '';
+
+// Procesar la inserción cuando el formulario es enviado
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $name = $_POST['name'];
-    $university_id = $_POST['university_id'];
+    // Obtener los valores del formulario
+    $values = [];
+    foreach ($form_fields as $field) {
+        $values[$field] = $_POST[$field] ?? '';  // Obtener el valor del formulario, o vacío si no existe
+    }
 
-    // Insertar carrera en la base de datos
-    $sql = "INSERT INTO careers (name, university_id) VALUES (:name, :university_id)";
+    // Construir la consulta SQL para la inserción
+    $sql = "INSERT INTO $table (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ")";
     $stmt = $pdo->prepare($sql);
-    $stmt->bindParam(':name', $name);
-    $stmt->bindParam(':university_id', $university_id);
 
+    // Asociar los valores con los placeholders
+    foreach ($values as $key => $value) {
+        $stmt->bindParam(':' . $key, $values[$key]);
+    }
+
+    // Ejecutar la consulta
     if ($stmt->execute()) {
-        $message = "Carrera creada con éxito.";
+        $message = "Registro creado con éxito.";
         $alertClass = "alert-success";
     } else {
-        $message = "Error al crear la carrera.";
+        $message = "Error al crear el registro.";
         $alertClass = "alert-danger";
     }
 }
+
+// Obtener las universidades o cualquier otro dato necesario para el formulario
+if ($table === 'careers') {
+    $sql = "SELECT id, name FROM universities";
+    $stmt = $pdo->query($sql);
+    $universities = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title>Crear Carrera</title>
-</head>
-<body>
-<div class="container mt-5">
-    <h1 class="mb-4">Crear Carrera</h1>
+<?php include __DIR__ . '/../headers.php'; ?>
+<?php include __DIR__ . '/../navbar.php'; ?>
 
+<div class="container mt-5">
+    <h1 class="mb-4">Crear <?php echo ucfirst($table); ?></h1>
+
+    <!-- Mostrar mensaje de éxito o error -->
     <?php if (!empty($message)): ?>
         <div class="alert <?php echo $alertClass; ?>" role="alert">
             <?php echo $message; ?>
         </div>
     <?php endif; ?>
 
+    <!-- Formulario para insertar datos -->
     <form method="post" class="needs-validation" novalidate>
-        <div class="mb-3">
-            <label for="name" class="form-label">Nombre de la carrera</label>
-            <input type="text" class="form-control" id="name" name="name" required>
-            <div class="invalid-feedback">
-                Por favor, ingresa el nombre de la carrera.
+        <?php foreach ($form_fields as $field): ?>
+            <div class="mb-3">
+                <label for="<?php echo $field; ?>" class="form-label"><?php echo ucfirst($field); ?></label>
+                <?php if ($field === 'university_id' && isset($universities)): ?>
+                    <!-- Campo de selección para universidades -->
+                    <select class="form-select" id="<?php echo $field; ?>" name="<?php echo $field; ?>" required>
+                        <option value="" disabled selected>Selecciona una universidad</option>
+                        <?php foreach ($universities as $university): ?>
+                            <option value="<?php echo $university['id']; ?>"><?php echo htmlspecialchars($university['name']); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                <?php else: ?>
+                    <!-- Campo de texto para otras columnas -->
+                    <input type="text" class="form-control" id="<?php echo $field; ?>" name="<?php echo $field; ?>" required>
+                <?php endif; ?>
+                <div class="invalid-feedback">
+                    Por favor, ingresa un valor para <?php echo ucfirst($field); ?>.
+                </div>
             </div>
-        </div>
-        <div class="mb-3">
-            <label for="university_id" class="form-label">Universidad</label>
-            <select class="form-select" id="university_id" name="university_id" required>
-                <option value="" disabled selected>Selecciona una universidad</option>
-                <?php
-                // Mostrar las universidades disponibles
-                $sql = "SELECT id, name FROM universities";
-                $stmt = $pdo->query($sql);
-                $universities = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                foreach ($universities as $university) {
-                    echo "<option value='" . $university['id'] . "'>" . $university['name'] . "</option>";
-                }
-                ?>
-            </select>
-            <div class="invalid-feedback">
-                Por favor, selecciona una universidad.
-            </div>
-        </div>
-        <button type="submit" class="btn btn-primary">Crear Carrera</button>
+        <?php endforeach; ?>
+        <button type="submit" class="btn btn-primary">Crear Registro</button>
     </form>
 </div>
 
@@ -87,5 +103,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     })();
 </script>
 
-</body>
-</html>
+<?php include __DIR__ . '/../footer.php'; ?>

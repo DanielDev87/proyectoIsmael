@@ -30,8 +30,5 @@ foreach ($universities as $university) {
 }
 
 
-}
-
-ec
 echo "</table>";
 ?>
